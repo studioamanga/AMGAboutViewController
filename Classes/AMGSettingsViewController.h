@@ -16,10 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AMGSettingsDataRow : NSObject
 
 @property (nonatomic, copy) NSString *title;
-@property (nonatomic, copy) NSString *imageName;
+@property (nonatomic, copy, nullable) NSString *imageName;
 @property (nonatomic, copy) void (^action)(id);
 
-- (instancetype)initWithTitle:(NSString *)title imageName:(NSString *)imageName action:(void(^)(id))action;
+- (instancetype)initWithTitle:(NSString *)title imageName:(nullable NSString *)imageName action:(void(^)(id))action;
 
 @end
 
@@ -28,6 +28,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, strong) NSArray <AMGSettingsDataRow *> *rows;
+
+@end
+
+@interface AMGSettingsAction : NSObject
+
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic) SEL action;
+
+- (instancetype)initWithTitle:(NSString *)title action:(SEL)action;
 
 @end
 
@@ -43,6 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, nullable) NSArray <AMGSettingsDataSection *> *sections;
 @property (nonatomic, strong, nullable) AMGSettingsDataSection *aboutSection;
+
+@property (nonatomic, strong, nullable) NSArray <AMGSettingsAction *> *footerActions;
 
 /// Configuration
 

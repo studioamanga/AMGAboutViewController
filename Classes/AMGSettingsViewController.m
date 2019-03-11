@@ -39,6 +39,18 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
 @end
 
 
+@implementation AMGSettingsAction
+
+- (instancetype)initWithTitle:(NSString *)title action:(nonnull SEL)action {
+    self = [super init];
+    self.title = title;
+    self.action = action;
+    return self;
+}
+
+@end
+
+
 @interface AMGSettingsViewController ()
 
 @end
@@ -66,6 +78,10 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
     }];
     aboutSection.rows = @[reviewRow, shareRow, emailRow, twitterRow];
     self.aboutSection = aboutSection;
+
+    AMGSettingsAction *ackRow = [[AMGSettingsAction alloc] initWithTitle:[VTAcknowledgementsViewController localizedTitle] action:@selector(presentLicensesViewController:)];
+    self.footerActions = @[ackRow];
+
     return self;
 }
 
@@ -109,7 +125,10 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
     }
 
     const CGFloat appsHeaderHeight = 170;
-    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, appsHeaderHeight + 140)];
+    const CGFloat ActionHeight = 20;
+    const CGFloat ActionMargin = 10;
+
+    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, appsHeaderHeight + 120 + (ActionHeight + ActionMargin) * self.footerActions.count)];
 
     footerView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     CGFloat iconWidth = 70;
@@ -143,23 +162,28 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
     UILabel *creditsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, appsHeaderHeight + 20, 320, 40)];
     creditsLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     creditsLabel.textAlignment = NSTextAlignmentCenter;
-    creditsLabel.font = [UIFont systemFontOfSize:12];
+    creditsLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
     creditsLabel.textColor = [UIColor colorWithWhite:0.7 alpha:1];
     creditsLabel.numberOfLines = 2;
     creditsLabel.text = [NSString stringWithFormat:@"%@ v%@\n%@", bundleDisplayName, bundleShortVersion, NSLocalizedString(@"Made by Studio AMANgA", nil)];
     [footerView addSubview:creditsLabel];
 
-    UIButton *acknowledgementsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    acknowledgementsButton.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    acknowledgementsButton.titleLabel.font = [UIFont systemFontOfSize:12];
+    NSDictionary *normalAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.7 alpha:1]};
+    NSDictionary *highlightedAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.4 alpha:1]};
 
-    [acknowledgementsButton setAttributedTitle:[self acknowledgementsTitleWithColor:[UIColor colorWithWhite:0.7 alpha:1]] forState:UIControlStateNormal];
-    [acknowledgementsButton setAttributedTitle:[self acknowledgementsTitleWithColor:[UIColor colorWithWhite:0.4 alpha:1]] forState:UIControlStateHighlighted];
+    [self.footerActions enumerateObjectsUsingBlock:^(AMGSettingsAction * _Nonnull action, NSUInteger index, BOOL * _Nonnull stop) {
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        button.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
 
-    [acknowledgementsButton addTarget:self action:@selector(presentLicensesViewController:) forControlEvents:UIControlEventTouchUpInside];
+        [button setAttributedTitle:[[NSAttributedString alloc] initWithString:action.title attributes:normalAttributes] forState:UIControlStateNormal];
+        [button setAttributedTitle:[[NSAttributedString alloc] initWithString:action.title attributes:highlightedAttributes] forState:UIControlStateHighlighted];
 
-    acknowledgementsButton.frame = CGRectMake(0, appsHeaderHeight + 70, 320, 20);
-    [footerView addSubview:acknowledgementsButton];
+        [button addTarget:self action:action.action forControlEvents:UIControlEventTouchUpInside];
+
+        button.frame = CGRectMake(0, appsHeaderHeight + 70 + index * (ActionHeight + ActionMargin), 320, ActionHeight);
+        [footerView addSubview:button];
+    }];
 
     self.tableView.tableFooterView = footerView;
 }
