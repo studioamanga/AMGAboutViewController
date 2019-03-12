@@ -59,9 +59,7 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
 
 #pragma mark - View life cycle
 
-- (instancetype)init {
-    self = [super initWithStyle:UITableViewStyleGrouped];
-
+- (void)commonInit {
     AMGSettingsDataSection *aboutSection = [[AMGSettingsDataSection alloc] init];
     aboutSection.title = NSLocalizedString(@"About", nil);
     AMGSettingsDataRow *reviewRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Review on the App Store", nil) imageName:@"IconStar" action:^(id sender) {
@@ -81,6 +79,18 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
 
     AMGSettingsAction *ackRow = [[AMGSettingsAction alloc] initWithTitle:[VTAcknowledgementsViewController localizedTitle] action:@selector(presentLicensesViewController:)];
     self.footerActions = @[ackRow];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+    [self commonInit];
+
+    return self;
+}
+
+- (instancetype)init {
+    self = [super initWithStyle:UITableViewStyleGrouped];
+    [self commonInit];
 
     return self;
 }
@@ -303,23 +313,15 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if ((NSUInteger)section >= self.sections.count) {
-        if (self.sections.count == 0) {
-            return nil;
-        }
-
-        return self.aboutSection.title;
+    if (self.sections.count == 0) {
+        return nil;
     }
 
-    return self.sections[section].title;
+    return self.aboutSection.title;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if ((NSUInteger)section >= self.sections.count) {
-        return self.aboutSection.rows.count;
-    }
-
-    return self.sections[section].rows.count;
+    return self.aboutSection.rows.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
