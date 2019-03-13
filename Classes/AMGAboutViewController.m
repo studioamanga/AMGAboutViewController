@@ -1,11 +1,11 @@
 //
-//  AMGSettingsViewController.m
+//  AMGAboutViewController.m
 //
 //  Created by Vincent Tourraine on 11/03/2019.
 //  Copyright © 2019 Studio AMANgA. All rights reserved.
 //
 
-#import "AMGSettingsViewController.h"
+#import "AMGAboutViewController.h"
 
 #import <SVProgressHUD.h>
 #import <AMGAppButton/AMGApp.h>
@@ -41,7 +41,7 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
 
 @implementation AMGSettingsAction
 
-- (instancetype)initWithTitle:(NSString *)title action:(nonnull SEL)action {
+- (instancetype)initWithTitle:(NSString *)title action:(void (^)(AMGAboutViewController *))action {
     self = [super init];
     self.title = title;
     self.action = action;
@@ -51,15 +51,13 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
 @end
 
 
-@interface AMGSettingsViewController ()
-
-@end
-
-@implementation AMGSettingsViewController
+@implementation AMGAboutViewController
 
 #pragma mark - View life cycle
 
 - (void)commonInit {
+    self.title = NSLocalizedString(@"About this App", nil);
+
     AMGSettingsDataSection *aboutSection = [[AMGSettingsDataSection alloc] init];
     aboutSection.title = NSLocalizedString(@"About", nil);
     AMGSettingsDataRow *reviewRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Review on the App Store", nil) imageName:@"IconStar" action:^(id sender) {
@@ -68,16 +66,15 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
     AMGSettingsDataRow *shareRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Share the App", nil) imageName:@"IconChat" action:^(id sender) {
         [self shareApp:sender];
     }];
-    AMGSettingsDataRow *emailRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Contact Support", nil) imageName:@"IconEnvelope" action:^(id sender) {
-        [self emailSupport:sender];
-    }];
     AMGSettingsDataRow *twitterRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Follow on Twitter", nil) imageName:@"IconTwitter" action:^(id sender) {
         [self openTwitterAccount:sender];
     }];
-    aboutSection.rows = @[reviewRow, shareRow, emailRow, twitterRow];
+    aboutSection.rows = @[reviewRow, shareRow, twitterRow];
     self.aboutSection = aboutSection;
 
-    AMGSettingsAction *ackRow = [[AMGSettingsAction alloc] initWithTitle:[VTAcknowledgementsViewController localizedTitle] action:@selector(presentLicensesViewController:)];
+    AMGSettingsAction *ackRow = [[AMGSettingsAction alloc] initWithTitle:[VTAcknowledgementsViewController localizedTitle] action:^(AMGAboutViewController *viewController) {
+        [viewController presentLicensesViewController:nil];
+    }];
     self.footerActions = @[ackRow];
 }
 
@@ -188,8 +185,8 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
 
         [button setAttributedTitle:[[NSAttributedString alloc] initWithString:action.title attributes:normalAttributes] forState:UIControlStateNormal];
         [button setAttributedTitle:[[NSAttributedString alloc] initWithString:action.title attributes:highlightedAttributes] forState:UIControlStateHighlighted];
-
-        [button addTarget:self action:action.action forControlEvents:UIControlEventTouchUpInside];
+        button.tag = index;
+        [button addTarget:self action:@selector(performFooterAction:) forControlEvents:UIControlEventTouchUpInside];
 
         button.frame = CGRectMake(0, appsHeaderHeight + 70 + index * (ActionHeight + ActionMargin), 320, ActionHeight);
         [footerView addSubview:button];
@@ -237,24 +234,24 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
     [application openURL:twitterURL];
 }
 
-- (IBAction)emailSupport:(id)sender {
++ (void)presentContactSupportViewControllerFrom:(UIViewController <MFMailComposeViewControllerDelegate> *)presentingViewController  {
     if (MFMailComposeViewController.canSendMail == NO) {
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Cannot Send Email", nil) message:NSLocalizedString(@"Please configure an email account first, or contact me directly at studioamanga@gmail.com", nil) preferredStyle:UIAlertControllerStyleAlert];
         [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleCancel handler:nil]];
-        [self presentViewController:alertController animated:YES completion:nil];
+        [presentingViewController presentViewController:alertController animated:YES completion:nil];
 
         return;
     }
 
     NSDictionary *bundleInfo = NSBundle.mainBundle.infoDictionary;
     MFMailComposeViewController *viewController = [[MFMailComposeViewController alloc] init];
-    viewController.mailComposeDelegate = self;
+    viewController.mailComposeDelegate = presentingViewController;
     [viewController setToRecipients:@[@"studioamanga@gmail.com"]];
     NSString *bundleDisplayName = bundleInfo[@"CFBundleDisplayName"];
     NSString *bundleShortVersion = bundleInfo[@"CFBundleShortVersionString"];
     [viewController setSubject:[NSString stringWithFormat:@"%@ (%@)", bundleDisplayName, bundleShortVersion]];
 
-    [self presentViewController:viewController animated:YES completion:nil];
+    [presentingViewController presentViewController:viewController animated:YES completion:nil];
 }
 
 - (IBAction)showApplication:(id)sender {
@@ -290,14 +287,13 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
-- (IBAction)dismissViewController:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
+- (IBAction)performFooterAction:(UIButton *)sender {
+    AMGSettingsAction *action = self.footerActions[sender.tag];
+    action.action(self);
 }
 
-#pragma mark - Mail compose view delegate
-
-- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
-    [controller dismissViewControllerAnimated:YES completion:nil];
+- (IBAction)dismissViewController:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - Store product view delegate
@@ -307,18 +303,6 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
 }
 
 #pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return self.sections.count + 1;
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (self.sections.count == 0) {
-        return nil;
-    }
-
-    return self.aboutSection.title;
-}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.aboutSection.rows.count;

@@ -1,5 +1,5 @@
 //
-//  AMGSettingsViewController.h
+//  AMGAboutViewController.h
 //
 //  Created by Vincent Tourraine on 11/03/2019.
 //  Copyright © 2019 Studio AMANgA. All rights reserved.
@@ -10,6 +10,7 @@
 @import StoreKit;
 
 @class AMGApp;
+@class AMGAboutViewController;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -34,14 +35,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AMGSettingsAction : NSObject
 
 @property (nonatomic, copy) NSString *title;
-@property (nonatomic) SEL action;
+@property (nonatomic) void (^action)(AMGAboutViewController *);
 
-- (instancetype)initWithTitle:(NSString *)title action:(SEL)action;
+- (instancetype)initWithTitle:(NSString *)title action:(void (^)(AMGAboutViewController *))action;
 
 @end
 
 
-@interface AMGSettingsViewController : UITableViewController <MFMailComposeViewControllerDelegate, SKStoreProductViewControllerDelegate>
+@interface AMGAboutViewController : UITableViewController <MFMailComposeViewControllerDelegate, SKStoreProductViewControllerDelegate>
 
 @property (nonatomic, copy, nullable) NSNumber *appIdentifier;
 @property (nonatomic, copy, nullable) NSString *largeIconName;
@@ -50,7 +51,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSURL *shareAppURL;
 @property (nonatomic, strong, nullable) NSArray <AMGApp *> *otherApps;
 
-@property (nonatomic, strong, nullable) NSArray <AMGSettingsDataSection *> *sections;
 @property (nonatomic, strong, nullable) AMGSettingsDataSection *aboutSection;
 
 @property (nonatomic, strong, nullable) NSArray <AMGSettingsAction *> *footerActions;
@@ -65,12 +65,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (IBAction)reviewOnAppStore:(nullable id)sender;
 - (IBAction)shareApp:(nullable id)sender;
 - (IBAction)openTwitterAccount:(nullable id)sender;
-- (IBAction)emailSupport:(nullable id)sender;
 - (IBAction)showApplication:(nullable id)sender;
 - (IBAction)presentLicensesViewController:(nullable id)sender;
 - (IBAction)dismissViewController:(nullable id)sender;
 
-/// Data source
++ (void)presentContactSupportViewControllerFrom:(UIViewController <MFMailComposeViewControllerDelegate> *)presentingViewController;
 
 @end
 
