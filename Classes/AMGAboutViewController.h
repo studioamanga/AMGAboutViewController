@@ -10,9 +10,41 @@
 @import StoreKit;
 
 @class AMGApp;
-@class AMGAboutViewController;
+@class AMGSettingsDataSection;
+@class AMGSettingsAction;
 
 NS_ASSUME_NONNULL_BEGIN
+
+@interface AMGAboutViewController : UITableViewController <MFMailComposeViewControllerDelegate, SKStoreProductViewControllerDelegate>
+
+@property (nonatomic, copy, nullable) NSNumber *appIdentifier;
+@property (nonatomic, copy, nullable) NSString *localizedAppName;
+@property (nonatomic, copy, nullable) NSString *largeIconName;
+@property (nonatomic, copy, nullable) NSString *acknowledgementsFileName;
+@property (nonatomic, copy, nullable) NSURL *shareAppURL;
+@property (nonatomic, strong, nullable) NSArray <AMGApp *> *otherApps;
+
+@property (nonatomic, strong, nullable) AMGSettingsDataSection *aboutSection;
+@property (nonatomic, strong, nullable) NSArray <AMGSettingsAction *> *footerActions;
+
+/// Configuration
+
+- (void)configureHeader;
+- (void)configureFooter;
+
+/// Actions
+
+- (IBAction)reviewOnAppStore:(nullable id)sender;
+- (IBAction)shareApp:(nullable id)sender;
+- (IBAction)openTwitterAccount:(nullable id)sender;
+- (IBAction)showApplication:(nullable id)sender;
+- (IBAction)presentLicensesViewController:(nullable id)sender;
+- (IBAction)dismissViewController:(nullable id)sender;
+
++ (void)presentContactSupportViewControllerFrom:(UIViewController <MFMailComposeViewControllerDelegate> *)presentingViewController;
+
+@end
+
 
 @interface AMGSettingsDataRow : NSObject
 
@@ -41,36 +73,5 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-
-@interface AMGAboutViewController : UITableViewController <MFMailComposeViewControllerDelegate, SKStoreProductViewControllerDelegate>
-
-@property (nonatomic, copy, nullable) NSNumber *appIdentifier;
-@property (nonatomic, copy, nullable) NSString *largeIconName;
-@property (nonatomic, copy, nullable) NSString *acknowledgementsFileName;
-@property (nonatomic, copy, nullable) NSString *shareAppText;
-@property (nonatomic, copy, nullable) NSURL *shareAppURL;
-@property (nonatomic, strong, nullable) NSArray <AMGApp *> *otherApps;
-
-@property (nonatomic, strong, nullable) AMGSettingsDataSection *aboutSection;
-
-@property (nonatomic, strong, nullable) NSArray <AMGSettingsAction *> *footerActions;
-
-/// Configuration
-
-- (void)configureHeader;
-- (void)configureFooter;
-
-/// Actions
-
-- (IBAction)reviewOnAppStore:(nullable id)sender;
-- (IBAction)shareApp:(nullable id)sender;
-- (IBAction)openTwitterAccount:(nullable id)sender;
-- (IBAction)showApplication:(nullable id)sender;
-- (IBAction)presentLicensesViewController:(nullable id)sender;
-- (IBAction)dismissViewController:(nullable id)sender;
-
-+ (void)presentContactSupportViewControllerFrom:(UIViewController <MFMailComposeViewControllerDelegate> *)presentingViewController;
-
-@end
 
 NS_ASSUME_NONNULL_END

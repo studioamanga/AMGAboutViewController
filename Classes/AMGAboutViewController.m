@@ -15,42 +15,6 @@
 #import <VTAcknowledgementsViewController.h>
 
 
-NS_ENUM(NSUInteger, AMGAboutRow) {
-    AMGAboutRowReviewApp = 0,
-    AMGAboutRowShareApp,
-    AMGAboutRowEmail,
-    AMGAboutRowTwitter
-};
-
-@implementation AMGSettingsDataSection
-@end
-
-
-@implementation AMGSettingsDataRow
-
-- (instancetype)initWithTitle:(NSString *)title imageName:(NSString *)imageName action:(void(^)(id))action {
-    self = [super init];
-    self.title = title;
-    self.imageName = imageName;
-    self.action = action;
-    return self;
-}
-
-@end
-
-
-@implementation AMGSettingsAction
-
-- (instancetype)initWithTitle:(NSString *)title action:(void (^)(AMGAboutViewController *))action {
-    self = [super init];
-    self.title = title;
-    self.action = action;
-    return self;
-}
-
-@end
-
-
 @implementation AMGAboutViewController
 
 #pragma mark - View life cycle
@@ -112,11 +76,12 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
         return;
     }
 
+    UIImage *image = [UIImage imageNamed:self.largeIconName];
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 200)];
 
-    UIImageView *iconImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:self.largeIconName]];
+    UIImageView *iconImageView = [[UIImageView alloc] initWithImage:image];
     iconImageView.contentMode = UIViewContentModeCenter;
-    iconImageView.center = CGPointMake(headerView.center.x, headerView.center.y + 10);
+    iconImageView.center = headerView.center;
     iconImageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
     iconImageView.clipsToBounds = YES;
     iconImageView.layer.cornerRadius = 25;
@@ -172,7 +137,7 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
     creditsLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
     creditsLabel.textColor = [UIColor colorWithWhite:0.7 alpha:1];
     creditsLabel.numberOfLines = 2;
-    creditsLabel.text = [NSString stringWithFormat:@"%@ v%@\n%@", bundleDisplayName, bundleShortVersion, NSLocalizedString(@"Made by Studio AMANgA", nil)];
+    creditsLabel.text = [NSString stringWithFormat:@"%@ v%@\n%@", self.localizedAppName ?: bundleDisplayName, bundleShortVersion, NSLocalizedString(@"Made by Studio AMANgA", nil)];
     [footerView addSubview:creditsLabel];
 
     NSDictionary *normalAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.7 alpha:1]};
@@ -213,11 +178,11 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
 }
 
 - (void)shareApp:(id)sender {
-    if (self.shareAppText == nil || self.shareAppURL == nil) {
+    if (self.localizedAppName == nil || self.shareAppURL == nil) {
         return;
     }
 
-    NSArray *items = @[self.shareAppText, self.shareAppURL];
+    NSArray *items = @[self.localizedAppName, self.shareAppURL];
     UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
 
     activityViewController.popoverPresentationController.sourceView = self.tableView;
@@ -330,6 +295,35 @@ NS_ENUM(NSUInteger, AMGAboutRow) {
 
 - (nullable AMGSettingsDataRow *)rowAtIndexPath:(NSIndexPath *)indexPath {
     return self.aboutSection.rows[indexPath.row];
+}
+
+@end
+
+
+@implementation AMGSettingsDataSection
+@end
+
+
+@implementation AMGSettingsDataRow
+
+- (instancetype)initWithTitle:(NSString *)title imageName:(NSString *)imageName action:(void(^)(id))action {
+    self = [super init];
+    self.title = title;
+    self.imageName = imageName;
+    self.action = action;
+    return self;
+}
+
+@end
+
+
+@implementation AMGSettingsAction
+
+- (instancetype)initWithTitle:(NSString *)title action:(void (^)(AMGAboutViewController *))action {
+    self = [super init];
+    self.title = title;
+    self.action = action;
+    return self;
 }
 
 @end
