@@ -6,12 +6,14 @@
 //
 
 #import "AMGAboutViewController.h"
+#import "AMGAboutAction.h"
+#import "AMGAboutHeaderView.h"
+#import "AMGAboutFooterView.h"
 
 #import <SVProgressHUD.h>
 #import <AMGAppButton/AMGApp.h>
 #import <AMGAppButton/AMGAppButton.h>
 #import <VTAppButton.h>
-#import <NGAParallaxMotion.h>
 #import <VTAcknowledgementsViewController.h>
 
 
@@ -22,8 +24,6 @@
 - (void)commonInit {
     self.title = NSLocalizedString(@"About this App", nil);
 
-    AMGSettingsDataSection *aboutSection = [[AMGSettingsDataSection alloc] init];
-    aboutSection.title = NSLocalizedString(@"About", nil);
     AMGSettingsDataRow *reviewRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Review on the App Store", nil) imageName:@"IconStar" action:^(id sender) {
         [self reviewOnAppStore:sender];
     }];
@@ -33,8 +33,7 @@
     AMGSettingsDataRow *twitterRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Follow on Twitter", nil) imageName:@"IconTwitter" action:^(id sender) {
         [self openTwitterAccount:sender];
     }];
-    aboutSection.rows = @[reviewRow, shareRow, twitterRow];
-    self.aboutSection = aboutSection;
+    self.rows = @[reviewRow, shareRow, twitterRow];
 
     AMGSettingsAction *ackRow = [[AMGSettingsAction alloc] initWithTitle:[VTAcknowledgementsViewController localizedTitle] action:^(AMGAboutViewController *viewController) {
         [viewController presentLicensesViewController:nil];
@@ -59,8 +58,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    [self configureHeader];
-    [self configureFooter];
+    [self configureTableHeaderAndFooter];
 
     [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"Cell"];
 
@@ -71,99 +69,14 @@
 
 #pragma mark - Configuration
 
-- (void)configureHeader {
-    if (self.largeIconName == nil) {
-        return;
+- (void)configureTableHeaderAndFooter {
+    if (self.largeIconName != nil) {
+        self.tableView.tableHeaderView = [[AMGAboutHeaderView alloc] initWithIconImageNamed:self.largeIconName];
     }
 
-    UIImage *image = [UIImage imageNamed:self.largeIconName];
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 200)];
-
-    UIImageView *iconImageView = [[UIImageView alloc] initWithImage:image];
-    iconImageView.contentMode = UIViewContentModeCenter;
-    iconImageView.center = headerView.center;
-    iconImageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-    iconImageView.clipsToBounds = YES;
-    iconImageView.layer.cornerRadius = 25;
-    iconImageView.parallaxIntensity = 40;
-
-    [headerView addSubview:iconImageView];
-    self.tableView.tableHeaderView = headerView;
-}
-
-- (void)configureFooter {
-    if (self.otherApps == nil) {
-        return;
+    if (self.otherApps != nil) {
+        self.tableView.tableFooterView = [[AMGAboutFooterView alloc] initForViewController:self withApps:self.otherApps actions:self.footerActions];
     }
-
-    const CGFloat appsHeaderHeight = 170;
-    const CGFloat ActionHeight = 20;
-    const CGFloat ActionMargin = 10;
-
-    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, appsHeaderHeight + 120 + (ActionHeight + ActionMargin) * self.footerActions.count)];
-
-    footerView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    CGFloat iconWidth = 70;
-
-    UILabel *footerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 40, CGRectGetWidth(footerView.frame), 20)];
-    footerLabel.text = NSLocalizedString(@"Discover All My Apps", nil).uppercaseString;
-    footerLabel.textAlignment = NSTextAlignmentCenter;
-    footerLabel.textColor = [UIColor darkGrayColor];
-    footerLabel.font = [UIFont systemFontOfSize:13];
-    footerLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    [footerView addSubview:footerLabel];
-
-    CGFloat leftMargin = 10;
-    UIView *appsView = [[UIView alloc] initWithFrame:CGRectMake(0, 70, CGRectGetWidth(footerView.frame), iconWidth)];
-    appsView.backgroundColor = [UIColor clearColor];
-    appsView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-
-    for (AMGApp *app in self.otherApps) {
-        AMGAppButton *button = [AMGAppButton buttonWithApp:app];
-        [button addTarget:self action:@selector(showApplication:) forControlEvents:UIControlEventTouchUpInside];
-        button.frame = CGRectMake(leftMargin + [self.otherApps indexOfObject:app]*(iconWidth + 6), 0, iconWidth, iconWidth);
-        [appsView addSubview:button];
-    }
-
-    [footerView addSubview:appsView];
-
-    NSDictionary *bundleInfo = NSBundle.mainBundle.infoDictionary;
-    NSString *bundleDisplayName = bundleInfo[@"CFBundleDisplayName"];
-    NSString *bundleShortVersion = bundleInfo[@"CFBundleShortVersionString"];
-
-    UILabel *creditsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, appsHeaderHeight + 20, 320, 40)];
-    creditsLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    creditsLabel.textAlignment = NSTextAlignmentCenter;
-    creditsLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-    creditsLabel.textColor = [UIColor colorWithWhite:0.7 alpha:1];
-    creditsLabel.numberOfLines = 2;
-    creditsLabel.text = [NSString stringWithFormat:@"%@ v%@\n%@", self.localizedAppName ?: bundleDisplayName, bundleShortVersion, NSLocalizedString(@"Made by Studio AMANgA", nil)];
-    [footerView addSubview:creditsLabel];
-
-    NSDictionary *normalAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.7 alpha:1]};
-    NSDictionary *highlightedAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.4 alpha:1]};
-
-    [self.footerActions enumerateObjectsUsingBlock:^(AMGSettingsAction * _Nonnull action, NSUInteger index, BOOL * _Nonnull stop) {
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-        button.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-
-        [button setAttributedTitle:[[NSAttributedString alloc] initWithString:action.title attributes:normalAttributes] forState:UIControlStateNormal];
-        [button setAttributedTitle:[[NSAttributedString alloc] initWithString:action.title attributes:highlightedAttributes] forState:UIControlStateHighlighted];
-        button.tag = index;
-        [button addTarget:self action:@selector(performFooterAction:) forControlEvents:UIControlEventTouchUpInside];
-
-        button.frame = CGRectMake(0, appsHeaderHeight + 70 + index * (ActionHeight + ActionMargin), 320, ActionHeight);
-        [footerView addSubview:button];
-    }];
-
-    self.tableView.tableFooterView = footerView;
-}
-
-- (nonnull NSAttributedString *)acknowledgementsTitleWithColor:(nonnull UIColor *)color {
-    NSDictionary *attributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: color};
-    NSString *title = [VTAcknowledgementsViewController localizedTitle];
-    return [[NSAttributedString alloc] initWithString:title attributes:attributes];
 }
 
 #pragma mark - Actions
@@ -276,7 +189,7 @@
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.aboutSection.rows.count;
+    return self.rows.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -300,36 +213,7 @@
 #pragma mark - Helpers
 
 - (nullable AMGSettingsDataRow *)rowAtIndexPath:(NSIndexPath *)indexPath {
-    return self.aboutSection.rows[indexPath.row];
-}
-
-@end
-
-
-@implementation AMGSettingsDataSection
-@end
-
-
-@implementation AMGSettingsDataRow
-
-- (instancetype)initWithTitle:(NSString *)title imageName:(NSString *)imageName action:(void(^)(id))action {
-    self = [super init];
-    self.title = title;
-    self.imageName = imageName;
-    self.action = action;
-    return self;
-}
-
-@end
-
-
-@implementation AMGSettingsAction
-
-- (instancetype)initWithTitle:(NSString *)title action:(void (^)(AMGAboutViewController *))action {
-    self = [super init];
-    self.title = title;
-    self.action = action;
-    return self;
+    return self.rows[indexPath.row];
 }
 
 @end

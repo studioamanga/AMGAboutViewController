@@ -10,7 +10,7 @@
 @import StoreKit;
 
 @class AMGApp;
-@class AMGSettingsDataSection;
+@class AMGSettingsDataRow;
 @class AMGSettingsAction;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -24,13 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSURL *shareAppURL;
 @property (nonatomic, strong, nullable) NSArray <AMGApp *> *otherApps;
 
-@property (nonatomic, strong, nullable) AMGSettingsDataSection *aboutSection;
+@property (nonatomic, strong, nullable) NSArray <AMGSettingsDataRow *> *rows;
 @property (nonatomic, strong, nullable) NSArray <AMGSettingsAction *> *footerActions;
-
-/// Configuration
-
-- (void)configureHeader;
-- (void)configureFooter;
 
 /// Actions
 
@@ -39,39 +34,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (IBAction)openTwitterAccount:(nullable id)sender;
 - (IBAction)showApplication:(nullable id)sender;
 - (IBAction)presentLicensesViewController:(nullable id)sender;
+- (IBAction)performFooterAction:(nullable UIButton *)sender;
 - (IBAction)dismissViewController:(nullable id)sender;
 
 + (void)presentContactSupportViewControllerFrom:(UIViewController <MFMailComposeViewControllerDelegate> *)presentingViewController;
 
 @end
-
-
-@interface AMGSettingsDataRow : NSObject
-
-@property (nonatomic, copy) NSString *title;
-@property (nonatomic, copy, nullable) NSString *imageName;
-@property (nonatomic, copy) void (^action)(id);
-
-- (instancetype)initWithTitle:(NSString *)title imageName:(nullable NSString *)imageName action:(void(^)(id))action;
-
-@end
-
-
-@interface AMGSettingsDataSection : NSObject
-
-@property (nonatomic, copy) NSString *title;
-@property (nonatomic, strong) NSArray <AMGSettingsDataRow *> *rows;
-
-@end
-
-@interface AMGSettingsAction : NSObject
-
-@property (nonatomic, copy) NSString *title;
-@property (nonatomic) void (^action)(AMGAboutViewController *);
-
-- (instancetype)initWithTitle:(NSString *)title action:(void (^)(AMGAboutViewController *))action;
-
-@end
-
 
 NS_ASSUME_NONNULL_END
