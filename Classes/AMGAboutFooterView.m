@@ -19,6 +19,14 @@ const CGFloat IconWidth = 70;
 const CGFloat ActionHeight = 20;
 const CGFloat ActionMargin = 10;
 
+@interface AMGAboutFooterView ()
+
+@property (nonatomic, strong, nullable) UIScrollView *appsScrollView;
+@property (nonatomic, strong, nullable) UIView *appsView;
+
+@end
+
+
 @implementation AMGAboutFooterView
 
 - (instancetype)initForViewController:(AMGAboutViewController *)viewController withApps:(NSArray <AMGApp *> *)apps actions:(NSArray <AMGSettingsAction *> *)actions {
@@ -26,60 +34,98 @@ const CGFloat ActionMargin = 10;
     if (self) {
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 
-        UILabel *footerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 40, CGRectGetWidth(self.frame), 20)];
-        footerLabel.text = NSLocalizedString(@"Discover All My Apps", nil).uppercaseString;
-        footerLabel.textAlignment = NSTextAlignmentCenter;
-        footerLabel.textColor = [UIColor darkGrayColor];
-        footerLabel.font = [UIFont systemFontOfSize:13];
-        footerLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        UILabel *footerLabel = [self discoverAllMyAppsLabel];
         [self addSubview:footerLabel];
 
-        CGFloat leftMargin = 10;
-        UIView *appsView = [[UIView alloc] initWithFrame:CGRectMake(0, 70, CGRectGetWidth(self.frame), IconWidth)];
+        const CGFloat AppsSideMargin = 12;
+        const CGFloat AppsMargin = 8;
+        UIScrollView *appsScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 70, CGRectGetWidth(self.frame), IconWidth)];
+        appsScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        appsScrollView.clipsToBounds = NO;
+        appsScrollView.showsHorizontalScrollIndicator = NO;
+        appsScrollView.alwaysBounceHorizontal = NO;
+
+        UIView *appsView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, (apps.count * (IconWidth + AppsMargin)) - AppsMargin + (AppsSideMargin * 2), IconWidth)];
         appsView.backgroundColor = [UIColor clearColor];
         appsView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
 
         [apps enumerateObjectsUsingBlock:^(AMGApp * _Nonnull app, NSUInteger index, BOOL * _Nonnull stop) {
             AMGAppButton *button = [AMGAppButton buttonWithApp:app];
             [button addTarget:viewController action:@selector(showApplication:) forControlEvents:UIControlEventTouchUpInside];
-            button.frame = CGRectMake(leftMargin + index * (IconWidth + 6), 0, IconWidth, IconWidth);
+            button.frame = CGRectMake(AppsSideMargin + index * (IconWidth + AppsMargin), 0, IconWidth, IconWidth);
             [appsView addSubview:button];
         }];
 
-        [self addSubview:appsView];
+        appsView.center = CGPointMake(CGRectGetWidth(self.frame) / 2, IconWidth / 2);
+        [appsScrollView addSubview:appsView];
+        appsScrollView.contentSize = appsView.frame.size;
 
-        NSDictionary *bundleInfo = NSBundle.mainBundle.infoDictionary;
-        NSString *bundleDisplayName = bundleInfo[@"CFBundleDisplayName"];
-        NSString *bundleShortVersion = bundleInfo[@"CFBundleShortVersionString"];
+        [self addSubview:appsScrollView];
+        self.appsScrollView = appsScrollView;
+        self.appsView = appsView;
 
-        UILabel *creditsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, AppsHeaderHeight + 20, 320, 40)];
-        creditsLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        creditsLabel.textAlignment = NSTextAlignmentCenter;
-        creditsLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-        creditsLabel.textColor = [UIColor colorWithWhite:0.7 alpha:1];
-        creditsLabel.numberOfLines = 2;
-        creditsLabel.text = [NSString stringWithFormat:@"%@ v%@\n%@", viewController.localizedAppName ?: bundleDisplayName, bundleShortVersion, NSLocalizedString(@"Made by Studio AMANgA", nil)];
+        UILabel *creditsLabel = [self creditsLabelForViewController:viewController];
         [self addSubview:creditsLabel];
 
-        NSDictionary *normalAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.7 alpha:1]};
-        NSDictionary *highlightedAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.4 alpha:1]};
-
         [actions enumerateObjectsUsingBlock:^(AMGSettingsAction * _Nonnull action, NSUInteger index, BOOL * _Nonnull stop) {
-            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-            button.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-            button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-
-            [button setAttributedTitle:[[NSAttributedString alloc] initWithString:action.title attributes:normalAttributes] forState:UIControlStateNormal];
-            [button setAttributedTitle:[[NSAttributedString alloc] initWithString:action.title attributes:highlightedAttributes] forState:UIControlStateHighlighted];
-            button.tag = index;
-            [button addTarget:viewController action:@selector(performFooterAction:) forControlEvents:UIControlEventTouchUpInside];
-
-            button.frame = CGRectMake(0, AppsHeaderHeight + 70 + index * (ActionHeight + ActionMargin), 320, ActionHeight);
+            UIButton *button = [self buttonForAction:action index:index target:viewController];
             [self addSubview:button];
         }];
     }
 
     return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+
+    if (CGRectGetWidth(self.appsScrollView.frame) > CGRectGetWidth(self.appsView.frame)) {
+        self.appsView.center = CGPointMake(CGRectGetWidth(self.appsScrollView.frame) / 2, CGRectGetHeight(self.appsScrollView.frame) / 2);
+    }
+    else {
+        self.appsView.frame = CGRectMake(0, 0, CGRectGetWidth(self.appsView.frame), CGRectGetHeight(self.appsView.frame));
+    }
+}
+
+- (UILabel *)discoverAllMyAppsLabel {
+    UILabel *footerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 40, CGRectGetWidth(self.frame), 20)];
+    footerLabel.text = NSLocalizedString(@"Discover All My Apps", nil).uppercaseString;
+    footerLabel.textAlignment = NSTextAlignmentCenter;
+    footerLabel.textColor = [UIColor darkGrayColor];
+    footerLabel.font = [UIFont systemFontOfSize:13];
+    footerLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    return footerLabel;
+}
+
+- (UILabel *)creditsLabelForViewController:(AMGAboutViewController *)viewController {
+    NSDictionary *bundleInfo = NSBundle.mainBundle.infoDictionary;
+    NSString *bundleDisplayName = bundleInfo[@"CFBundleDisplayName"];
+    NSString *bundleShortVersion = bundleInfo[@"CFBundleShortVersionString"];
+
+    UILabel *creditsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, AppsHeaderHeight + 20, 320, 40)];
+    creditsLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    creditsLabel.textAlignment = NSTextAlignmentCenter;
+    creditsLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    creditsLabel.textColor = [UIColor colorWithWhite:0.7 alpha:1];
+    creditsLabel.numberOfLines = 2;
+    creditsLabel.text = [NSString stringWithFormat:@"%@ v%@\n%@", viewController.localizedAppName ?: bundleDisplayName, bundleShortVersion, NSLocalizedString(@"Made by Studio AMANgA", nil)];
+    return creditsLabel;
+}
+
+- (UIButton *)buttonForAction:(AMGSettingsAction *)action index:(NSUInteger)index target:(id)target {
+    NSDictionary *normalAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.7 alpha:1]};
+    NSDictionary *highlightedAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.4 alpha:1]};
+
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+
+    [button setAttributedTitle:[[NSAttributedString alloc] initWithString:action.title attributes:normalAttributes] forState:UIControlStateNormal];
+    [button setAttributedTitle:[[NSAttributedString alloc] initWithString:action.title attributes:highlightedAttributes] forState:UIControlStateHighlighted];
+    button.tag = index;
+    [button addTarget:target action:@selector(performFooterAction:) forControlEvents:UIControlEventTouchUpInside];
+    button.frame = CGRectMake(0, AppsHeaderHeight + 70 + index * (ActionHeight + ActionMargin), 320, ActionHeight);
+    return button;
 }
 
 @end

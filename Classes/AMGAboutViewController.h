@@ -22,7 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *largeIconName;
 @property (nonatomic, copy, nullable) NSString *acknowledgementsFileName;
 @property (nonatomic, copy, nullable) NSURL *shareAppURL;
-@property (nonatomic, strong, nullable) NSArray <AMGApp *> *otherApps;
 
 @property (nonatomic, strong, nullable) NSArray <AMGSettingsDataRow *> *rows;
 @property (nonatomic, strong, nullable) NSArray <AMGSettingsAction *> *footerActions;
