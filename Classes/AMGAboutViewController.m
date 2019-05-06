@@ -74,7 +74,7 @@
         self.tableView.tableHeaderView = [[AMGAboutHeaderView alloc] initWithIconImageNamed:self.largeIconName];
     }
 
-    NSArray <AMGApp *> *allApps = @[AMGApp.appGamesKeeper, AMGApp.appComicBookDay, AMGApp.appContacts, AMGApp.app1List, AMGApp.appWizBox, AMGApp.appMemorii, AMGApp.appMegaMoji, AMGApp.appD0TSEchoplex];
+    NSArray <AMGApp *> *allApps = @[AMGApp.appGamesKeeper, AMGApp.appComicBookDay, AMGApp.appContacts, AMGApp.app1List, AMGApp.appWizBox, AMGApp.appMemorii, AMGApp.appMegaMoji, AMGApp.appD0TSEchoplex, AMGApp.appNanoNotes];
     NSArray <AMGApp *> *otherApps = [allApps filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"%K != %@", NSStringFromSelector(@selector(identifier)), self.appIdentifier]];
 
     self.tableView.tableFooterView = [[AMGAboutFooterView alloc] initForViewController:self withApps:otherApps actions:self.footerActions];
