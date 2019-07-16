@@ -91,8 +91,8 @@ const CGFloat ActionMargin = 10;
     UILabel *footerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 40, CGRectGetWidth(self.frame), 20)];
     footerLabel.text = NSLocalizedString(@"Discover All My Apps", nil).uppercaseString;
     footerLabel.textAlignment = NSTextAlignmentCenter;
-    footerLabel.textColor = [UIColor darkGrayColor];
-    footerLabel.font = [UIFont systemFontOfSize:13];
+    footerLabel.textColor = [self primaryTextColor];
+    footerLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
     footerLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     return footerLabel;
 }
@@ -106,15 +106,15 @@ const CGFloat ActionMargin = 10;
     creditsLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     creditsLabel.textAlignment = NSTextAlignmentCenter;
     creditsLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-    creditsLabel.textColor = [UIColor colorWithWhite:0.7 alpha:1];
+    creditsLabel.textColor = [self primaryTextColor];
     creditsLabel.numberOfLines = 2;
     creditsLabel.text = [NSString stringWithFormat:@"%@ v%@\n%@", viewController.localizedAppName ?: bundleDisplayName, bundleShortVersion, NSLocalizedString(@"Made by Studio AMANgA", nil)];
     return creditsLabel;
 }
 
 - (UIButton *)buttonForAction:(AMGSettingsAction *)action index:(NSUInteger)index target:(id)target {
-    NSDictionary *normalAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.7 alpha:1]};
-    NSDictionary *highlightedAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [UIColor colorWithWhite:0.4 alpha:1]};
+    NSDictionary *normalAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [self primaryTextColor]};
+    NSDictionary *highlightedAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [self secondaryTextColor]};
 
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -126,6 +126,26 @@ const CGFloat ActionMargin = 10;
     [button addTarget:target action:@selector(performFooterAction:) forControlEvents:UIControlEventTouchUpInside];
     button.frame = CGRectMake(0, AppsHeaderHeight + 70 + index * (ActionHeight + ActionMargin), 320, ActionHeight);
     return button;
+}
+
+#pragma mark - Colors
+
+- (UIColor *)primaryTextColor {
+    if (@available(iOS 13.0, *)) {
+        return [UIColor secondaryLabelColor];
+    }
+    else {
+        return [UIColor colorWithWhite:0.7 alpha:1];
+    }
+}
+
+- (UIColor *)secondaryTextColor {
+    if (@available(iOS 13.0, *)) {
+        return [UIColor tertiaryLabelColor];
+    }
+    else {
+        return [UIColor colorWithWhite:0.4 alpha:1];
+    }
 }
 
 @end

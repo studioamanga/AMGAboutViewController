@@ -49,7 +49,13 @@
 }
 
 - (instancetype)init {
-    self = [super initWithStyle:UITableViewStyleGrouped];
+    if (@available(iOS 13.0, *)) {
+        self = [super initWithStyle:UITableViewStyleInsetGrouped];
+    }
+    else {
+        self = [super initWithStyle:UITableViewStyleGrouped];
+    }
+
     [self commonInit];
 
     return self;
