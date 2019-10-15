@@ -15,9 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy, nullable) NSString *imageName;
+@property (nonatomic, copy, nullable) NSString *systemImageName;
 @property (nonatomic, copy) void (^action)(id);
 
-- (instancetype)initWithTitle:(NSString *)title imageName:(nullable NSString *)imageName action:(void(^)(id))action;
+- (instancetype)initWithTitle:(NSString *)title imageName:(nullable NSString *)imageName systemImageName:(nullable NSString *)systemImageName action:(void(^)(id))action;
 
 @end
 

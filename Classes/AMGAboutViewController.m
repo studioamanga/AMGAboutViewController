@@ -24,13 +24,13 @@
 - (void)commonInit {
     self.title = NSLocalizedString(@"About this App", nil);
 
-    AMGSettingsDataRow *reviewRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Review on the App Store", nil) imageName:@"IconStar" action:^(id sender) {
+    AMGSettingsDataRow *reviewRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Review on the App Store", nil) imageName:@"IconStar" systemImageName:@"star" action:^(id sender) {
         [self reviewOnAppStore:sender];
     }];
-    AMGSettingsDataRow *shareRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Share the App", nil) imageName:@"IconChat" action:^(id sender) {
+    AMGSettingsDataRow *shareRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Share the App", nil) imageName:@"IconChat" systemImageName:@"square.on.square" action:^(id sender) {
         [self shareApp:sender];
     }];
-    AMGSettingsDataRow *twitterRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Follow on Twitter", nil) imageName:@"IconTwitter" action:^(id sender) {
+    AMGSettingsDataRow *twitterRow = [[AMGSettingsDataRow alloc] initWithTitle:NSLocalizedString(@"Follow on Twitter", nil) imageName:@"IconTwitter" systemImageName:@"text.bubble" action:^(id sender) {
         [self openTwitterAccount:sender];
     }];
     self.rows = @[reviewRow, shareRow, twitterRow];
@@ -204,7 +204,14 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     AMGSettingsDataRow *row = [self rowAtIndexPath:indexPath];
     cell.textLabel.text = row.title;
-    cell.imageView.image = [UIImage imageNamed:row.imageName];
+
+    if (@available(iOS 13.0, *)) {
+        cell.imageView.image = [UIImage systemImageNamed:row.systemImageName];
+    }
+    else {
+        cell.imageView.image = [UIImage imageNamed:row.imageName];
+    }
+
     return cell;
 }
 

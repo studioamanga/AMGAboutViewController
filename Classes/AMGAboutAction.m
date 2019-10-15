@@ -9,10 +9,11 @@
 
 @implementation AMGSettingsDataRow
 
-- (instancetype)initWithTitle:(NSString *)title imageName:(NSString *)imageName action:(void(^)(id))action {
+- (instancetype)initWithTitle:(NSString *)title imageName:(NSString *)imageName systemImageName:(nullable NSString *)systemImageName action:(void(^)(id))action {
     self = [super init];
     self.title = title;
     self.imageName = imageName;
+    self.systemImageName = systemImageName;
     self.action = action;
     return self;
 }
