@@ -184,7 +184,7 @@
 #pragma mark - Store product view delegate
 
 - (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [viewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - Mail compose view delegate
