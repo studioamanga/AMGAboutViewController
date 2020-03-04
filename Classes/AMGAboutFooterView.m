@@ -88,13 +88,15 @@ const CGFloat ActionMargin = 10;
 }
 
 - (UILabel *)discoverAllMyAppsLabel {
-    UILabel *footerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 40, CGRectGetWidth(self.frame), 20)];
-    footerLabel.text = NSLocalizedString(@"Discover All My Apps", nil).uppercaseString;
-    footerLabel.textAlignment = NSTextAlignmentCenter;
-    footerLabel.textColor = [self primaryTextColor];
-    footerLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-    footerLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    return footerLabel;
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 40, CGRectGetWidth(self.frame), 20)];
+    label.text = NSLocalizedString(@"Discover All My Apps", nil).uppercaseString;
+    label.textAlignment = NSTextAlignmentCenter;
+    label.textColor = [self primaryTextColor];
+    label.font = [UIFont systemFontOfSize:13 weight:UIFontWeightRegular];
+    // Need Auto Layout
+    // label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    return label;
 }
 
 - (UILabel *)creditsLabelForViewController:(AMGAboutViewController *)viewController {
@@ -105,7 +107,9 @@ const CGFloat ActionMargin = 10;
     UILabel *creditsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, AppsHeaderHeight + 20, 320, 40)];
     creditsLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     creditsLabel.textAlignment = NSTextAlignmentCenter;
-    creditsLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    creditsLabel.font = [UIFont systemFontOfSize:13 weight:UIFontWeightRegular];
+    // Need Auto Layout
+    // creditsLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
     creditsLabel.textColor = [self primaryTextColor];
     creditsLabel.numberOfLines = 2;
     creditsLabel.text = [NSString stringWithFormat:@"%@ v%@\n%@", viewController.localizedAppName ?: bundleDisplayName, bundleShortVersion, NSLocalizedString(@"Made by Studio AMANgA", nil)];
@@ -118,7 +122,9 @@ const CGFloat ActionMargin = 10;
 
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    button.titleLabel.font = [UIFont systemFontOfSize:13 weight:UIFontWeightRegular];
+    // Need Auto Layout
+    // button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
 
     [button setAttributedTitle:[[NSAttributedString alloc] initWithString:action.title attributes:normalAttributes] forState:UIControlStateNormal];
     [button setAttributedTitle:[[NSAttributedString alloc] initWithString:action.title attributes:highlightedAttributes] forState:UIControlStateHighlighted];
