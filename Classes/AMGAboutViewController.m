@@ -94,7 +94,7 @@
     }
 
     NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://itunes.apple.com/app/id%@", self.appIdentifier]];
-    [[UIApplication sharedApplication] openURL:URL];
+    [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
 }
 
 - (void)shareApp:(id)sender {
@@ -116,7 +116,7 @@
 - (IBAction)openTwitterAccount:(id)sender {
     UIApplication *application = [UIApplication sharedApplication];
     NSURL *twitterURL = [NSURL URLWithString:@"https://www.twitter.com/StudioAMANgA"];
-    [application openURL:twitterURL];
+    [application openURL:twitterURL options:@{} completionHandler:nil];
 }
 
 + (void)presentContactSupportViewControllerFrom:(UIViewController <MFMailComposeViewControllerDelegate> *)presentingViewController  {
