@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name = "AMGAboutViewController"
-  s.version = "0.1"
+  s.version = "0.2"
   s.summary = "AMGAboutViewController..."
 
   s.description = <<-DESC
@@ -13,8 +13,8 @@ Pod::Spec.new do |s|
   s.author = { "Vincent Tourraine" => "me@vtourraine.net" }
   s.social_media_url = "http://twitter.com/AMGAboutViewController"
 
-  s.platform = :ios, '9.0'
-  s.source = { :git => "https://github.com/studioamanga/AMGAboutViewController.git", :tag => "0.1" }
+  s.platform = :ios, '10.0'
+  s.source = { :git => "https://github.com/studioamanga/AMGAboutViewController.git", :tag => "0.2" }
   s.source_files = 'Classes', 'Classes/**/*.{h,m}'
   s.requires_arc = true
 

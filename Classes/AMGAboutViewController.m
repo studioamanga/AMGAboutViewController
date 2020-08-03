@@ -132,7 +132,7 @@
 - (IBAction)openTwitterAccount:(id)sender {
     UIApplication *application = [UIApplication sharedApplication];
     NSURL *twitterURL = [NSURL URLWithString:@"https://www.twitter.com/StudioAMANgA"];
-    [application openURL:twitterURL];
+    [application openURL:twitterURL options:@{} completionHandler:nil];
 }
 
 + (void)presentContactSupportViewControllerFrom:(UIViewController <MFMailComposeViewControllerDelegate> *)presentingViewController  {
