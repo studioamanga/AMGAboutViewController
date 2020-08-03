@@ -2,7 +2,7 @@
 //  AMGAboutViewController.m
 //
 //  Created by Vincent Tourraine on 11/03/2019.
-//  Copyright © 2019 Studio AMANgA. All rights reserved.
+//  Copyright © 2019-2020 Studio AMANgA. All rights reserved.
 //
 
 #import "AMGAboutViewController.h"
@@ -67,6 +67,7 @@
     [self configureTableHeaderAndFooter];
 
     [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"Cell"];
+    self.tableView.cellLayoutMarginsFollowReadableWidth = YES;
 
     if (@available(iOS 11.0, *)) {
         self.navigationController.navigationBar.prefersLargeTitles = YES;
@@ -80,10 +81,14 @@
         self.tableView.tableHeaderView = [[AMGAboutHeaderView alloc] initWithIconImageNamed:self.largeIconName];
     }
 
+#if TARGET_OS_MACCATALYST
+    self.tableView.tableFooterView = [AMGAboutFooterView creditsLabelForViewController:self];
+#else
     NSArray <AMGApp *> *allApps = @[AMGApp.appGamesKeeper, AMGApp.appComicBookDay, AMGApp.appContacts, AMGApp.app1List, AMGApp.appWizBox, AMGApp.appMemorii, AMGApp.appMegaMoji, AMGApp.appD0TSEchoplex, AMGApp.appNanoNotes];
     NSArray <AMGApp *> *otherApps = [allApps filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"%K != %@", NSStringFromSelector(@selector(identifier)), self.appIdentifier]];
 
     self.tableView.tableFooterView = [[AMGAboutFooterView alloc] initForViewController:self withApps:otherApps actions:self.footerActions];
+#endif
 }
 
 #pragma mark - Actions
@@ -93,8 +98,19 @@
         return;
     }
 
-    NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"itms-apps://itunes.apple.com/app/id%@", self.appIdentifier]];
-    [[UIApplication sharedApplication] openURL:URL];
+#if TARGET_OS_MACCATALYST
+    NSString *URLString = [NSString stringWithFormat:@"macappstore://apps.apple.com/app/id%@?action=write-review", self.appIdentifier];
+#else
+    NSString *URLString = [NSString stringWithFormat:@"itms-apps://itunes.apple.com/app/id%@?action=write-review", self.appIdentifier];
+#endif
+    NSURL *URL = [NSURL URLWithString:URLString];
+
+    if (@available(iOS 10.0, *)) {
+        [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
+    }
+    else {
+        [[UIApplication sharedApplication] openURL:URL];
+    }
 }
 
 - (void)shareApp:(id)sender {
@@ -206,7 +222,12 @@
     cell.textLabel.text = row.title;
 
     if (@available(iOS 13.0, *)) {
-        cell.imageView.image = [UIImage systemImageNamed:row.systemImageName];
+        if (row.systemImageName) {
+            cell.imageView.image = [UIImage systemImageNamed:row.systemImageName];
+        }
+        else {
+            cell.imageView.image = [UIImage imageNamed:row.imageName];
+        }
     }
     else {
         cell.imageView.image = [UIImage imageNamed:row.imageName];

@@ -2,7 +2,7 @@
 //  AMGAboutFooterView.m
 //
 //  Created by Vincent Tourraine on 11/03/2019.
-//  Copyright © 2019 Studio AMANgA. All rights reserved.
+//  Copyright © 2019-2020 Studio AMANgA. All rights reserved.
 //
 
 #import "AMGAboutFooterView.h"
@@ -64,7 +64,7 @@ const CGFloat ActionMargin = 10;
         self.appsScrollView = appsScrollView;
         self.appsView = appsView;
 
-        UILabel *creditsLabel = [self creditsLabelForViewController:viewController];
+        UILabel *creditsLabel = [AMGAboutFooterView creditsLabelForViewController:viewController];
         [self addSubview:creditsLabel];
 
         [actions enumerateObjectsUsingBlock:^(AMGSettingsAction * _Nonnull action, NSUInteger index, BOOL * _Nonnull stop) {
@@ -91,7 +91,7 @@ const CGFloat ActionMargin = 10;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 40, CGRectGetWidth(self.frame), 20)];
     label.text = NSLocalizedString(@"Discover All My Apps", nil).uppercaseString;
     label.textAlignment = NSTextAlignmentCenter;
-    label.textColor = [self primaryTextColor];
+    label.textColor = [AMGAboutFooterView primaryTextColor];
     label.font = [UIFont systemFontOfSize:13 weight:UIFontWeightRegular];
     // Need Auto Layout
     // label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
@@ -99,7 +99,7 @@ const CGFloat ActionMargin = 10;
     return label;
 }
 
-- (UILabel *)creditsLabelForViewController:(AMGAboutViewController *)viewController {
++ (UILabel *)creditsLabelForViewController:(AMGAboutViewController *)viewController {
     NSDictionary *bundleInfo = NSBundle.mainBundle.infoDictionary;
     NSString *bundleDisplayName = bundleInfo[@"CFBundleDisplayName"];
     NSString *bundleShortVersion = bundleInfo[@"CFBundleShortVersionString"];
@@ -117,8 +117,8 @@ const CGFloat ActionMargin = 10;
 }
 
 - (UIButton *)buttonForAction:(AMGSettingsAction *)action index:(NSUInteger)index target:(id)target {
-    NSDictionary *normalAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [self primaryTextColor]};
-    NSDictionary *highlightedAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [self secondaryTextColor]};
+    NSDictionary *normalAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [AMGAboutFooterView primaryTextColor]};
+    NSDictionary *highlightedAttributes = @{NSUnderlineStyleAttributeName: @1, NSForegroundColorAttributeName: [AMGAboutFooterView secondaryTextColor]};
 
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -136,7 +136,7 @@ const CGFloat ActionMargin = 10;
 
 #pragma mark - Colors
 
-- (UIColor *)primaryTextColor {
++ (UIColor *)primaryTextColor {
     if (@available(iOS 13.0, *)) {
         return [UIColor secondaryLabelColor];
     }
@@ -145,7 +145,7 @@ const CGFloat ActionMargin = 10;
     }
 }
 
-- (UIColor *)secondaryTextColor {
++ (UIColor *)secondaryTextColor {
     if (@available(iOS 13.0, *)) {
         return [UIColor tertiaryLabelColor];
     }
