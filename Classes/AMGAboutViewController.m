@@ -104,14 +104,9 @@
 #else
     NSString *URLString = [NSString stringWithFormat:@"itms-apps://itunes.apple.com/app/id%@?action=write-review", self.appIdentifier];
 #endif
-    NSURL *URL = [NSURL URLWithString:URLString];
 
-    if (@available(iOS 10.0, *)) {
-        [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
-    }
-    else {
-        [[UIApplication sharedApplication] openURL:URL];
-    }
+    NSURL *URL = [NSURL URLWithString:URLString];
+    [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
 }
 
 - (void)shareApp:(id)sender {
