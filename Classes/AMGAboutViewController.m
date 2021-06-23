@@ -2,7 +2,7 @@
 //  AMGAboutViewController.m
 //
 //  Created by Vincent Tourraine on 11/03/2019.
-//  Copyright © 2019-2020 Studio AMANgA. All rights reserved.
+//  Copyright © 2019-2021 Studio AMANgA. All rights reserved.
 //
 
 #import "AMGAboutViewController.h"
@@ -15,6 +15,7 @@
 #import <AMGAppButton/AMGAppButton.h>
 #import <VTAppButton.h>
 #import <VTAcknowledgementsViewController.h>
+#import <VTLocalization.h>
 
 
 @implementation AMGAboutViewController
@@ -35,7 +36,7 @@
     }];
     self.rows = @[reviewRow, shareRow, twitterRow];
 
-    AMGSettingsAction *ackRow = [[AMGSettingsAction alloc] initWithTitle:[VTAcknowledgementsViewController localizedTitle] action:^(AMGAboutViewController *viewController) {
+    AMGSettingsAction *ackRow = [[AMGSettingsAction alloc] initWithTitle:[VTLocalization localizedTitle] action:^(AMGAboutViewController *viewController) {
         [viewController presentLicensesViewController:nil];
     }];
     self.footerActions = @[ackRow];
