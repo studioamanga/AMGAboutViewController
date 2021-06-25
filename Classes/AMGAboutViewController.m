@@ -131,7 +131,12 @@
     [application openURL:twitterURL options:@{} completionHandler:nil];
 }
 
-+ (void)presentContactSupportViewControllerFrom:(UIViewController <MFMailComposeViewControllerDelegate> *)presentingViewController  {
+
++ (void)presentContactSupportViewControllerFrom:(UIViewController <MFMailComposeViewControllerDelegate> *)presentingViewController {
+    [self presentContactSupportViewControllerFrom:presentingViewController delegate:presentingViewController];
+}
+
++ (void)presentContactSupportViewControllerFrom:(UIViewController *)presentingViewController delegate:(id<MFMailComposeViewControllerDelegate>)delegate {
     if (MFMailComposeViewController.canSendMail == NO) {
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Cannot Send Email", nil) message:NSLocalizedString(@"Please configure an email account first, or contact me directly at studioamanga@gmail.com", nil) preferredStyle:UIAlertControllerStyleAlert];
         [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleCancel handler:nil]];
@@ -142,7 +147,7 @@
 
     NSDictionary *bundleInfo = NSBundle.mainBundle.infoDictionary;
     MFMailComposeViewController *viewController = [[MFMailComposeViewController alloc] init];
-    viewController.mailComposeDelegate = presentingViewController;
+    viewController.mailComposeDelegate = delegate;
     [viewController setToRecipients:@[@"studioamanga@gmail.com"]];
     NSString *bundleDisplayName = bundleInfo[@"CFBundleDisplayName"];
     NSString *bundleShortVersion = bundleInfo[@"CFBundleShortVersionString"];

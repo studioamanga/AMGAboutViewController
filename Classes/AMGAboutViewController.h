@@ -37,6 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (IBAction)dismissViewController:(nullable id)sender;
 
 + (void)presentContactSupportViewControllerFrom:(UIViewController <MFMailComposeViewControllerDelegate> *)presentingViewController;
++ (void)presentContactSupportViewControllerFrom:(UIViewController *)presentingViewController delegate:(id<MFMailComposeViewControllerDelegate>)delegate;
 
 @end
 
