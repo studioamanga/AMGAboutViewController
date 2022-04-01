@@ -11,15 +11,16 @@ import StoreKit
 import AcknowList
 import VTAppButton
 import SVProgressHUD
+import AMGAppButton
 
-class AMGAboutViewController: UITableViewController {
-
-    var appIdentifier: Int?
-    var localizedAppName: String?
-    var largeIconName: String?
-    var acknowledgementsFileName: String?
-    var shareAppURL: URL?
-
+public class AMGAboutViewController: UITableViewController {
+    
+    public var appIdentifier: Int?
+    public var localizedAppName: String?
+    public var largeIconName: String?
+    public var acknowledgementsFileName: String?
+    public var shareAppURL: URL?
+    
     var rows: [AMGSettingsDataRow]?
     var footerActions: [AMGSettingsAction]?
     
@@ -32,7 +33,7 @@ class AMGAboutViewController: UITableViewController {
         commonInit()
     }
     
-    init() {
+    public init() {
         super.init(style: .insetGrouped)
         commonInit()
     }
@@ -53,9 +54,9 @@ class AMGAboutViewController: UITableViewController {
         }
         
         rows = [reviewRow, shareRow, twitterRow]
-
-        let ackRow = AMGSettingsAction(title: AcknowLocalization.localizedTitle()) { _ in
-            // [viewController presentLicensesViewController:nil];
+        
+        let ackRow = AMGSettingsAction(title: AcknowLocalization.localizedTitle()) { viewController in
+            viewController.presentLicensesViewController(nil)
         }
         
         footerActions = [ackRow]
@@ -63,14 +64,14 @@ class AMGAboutViewController: UITableViewController {
     
     // MARK: - View life cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         configureTableHeaderAndFooter()
-
+        
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: K.cellIdentifier)
         tableView.cellLayoutMarginsFollowReadableWidth = true
-
+        
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
@@ -82,14 +83,11 @@ class AMGAboutViewController: UITableViewController {
         }
         
 #if targetEnvironment(macCatalyst)
-        // tableView.tableFooterView = AMGAboutFooterView creditsLabelForViewController:self];
+        tableView.tableFooterView = AMGAboutFooterView.creditsLabel(for: self)
 #else
-        /*
-         NSArray <AMGApp *> *allApps = @[AMGApp.appGamesKeeper, AMGApp.appComicBookDay, AMGApp.appContacts, AMGApp.app1List, AMGApp.appWizBox, AMGApp.appMemorii, AMGApp.appMegaMoji, AMGApp.appD0TSEchoplex, AMGApp.appNanoNotes];
-         NSArray <AMGApp *> *otherApps = [allApps filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"%K != %@", NSStringFromSelector(@selector(identifier)), self.appIdentifier]];
-
-         self.tableView.tableFooterView = [[AMGAboutFooterView alloc] initForViewController:self withApps:otherApps actions:self.footerActions];
-         */
+        let allApps: [AMGApp] = [.gamesKeeper, .comicBookDay, .contacts, .oneList, .wizBox, .memorii, .megaMoji, .d0tsEchoplex, .nanoNotes]
+        let otherApps = allApps.filter { $0.identifier != appIdentifier }
+        tableView.tableFooterView = AMGAboutFooterView(for: self, with: otherApps, actions: footerActions ?? [])
 #endif
     }
     
@@ -123,7 +121,7 @@ class AMGAboutViewController: UITableViewController {
         if let sender = sender as? IndexPath {
             activityViewController.popoverPresentationController?.sourceRect = tableView.rectForRow(at: sender)
         }
-
+        
         present(activityViewController, animated: true)
     }
     
@@ -143,7 +141,7 @@ class AMGAboutViewController: UITableViewController {
             let alertController = UIAlertController(title: NSLocalizedString("Cannot Send Email", comment: ""), message: NSLocalizedString("Please configure an email account first, or contact me directly at studioamanga@gmail.com", comment: ""), preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .cancel))
             presentingViewController.present(alertController, animated: true)
-
+            
             return
         }
         
@@ -161,13 +159,14 @@ class AMGAboutViewController: UITableViewController {
     }
     
     @objc func showApplication(_ sender: Any) {
-        guard let sender = sender as? VTAppButton else {
+        guard let sender = sender as? VTAppButton,
+              let senderAppIdentifier = sender.appIdentifier else {
             return
         }
         
         SVProgressHUD.show()
         
-        let appIdentifier = NSNumber(integerLiteral: sender.appIdentifier)
+        let appIdentifier = NSNumber(integerLiteral: senderAppIdentifier)
         let storeProductViewController = SKStoreProductViewController()
         storeProductViewController.delegate = self
         storeProductViewController.loadProduct(withParameters: [SKStoreProductParameterITunesItemIdentifier: appIdentifier]) { result, error in
@@ -182,7 +181,7 @@ class AMGAboutViewController: UITableViewController {
         }
     }
     
-    func presentLicensesViewController(_ sender: Any) {
+    func presentLicensesViewController(_ sender: Any?) {
         let viewController: UIViewController
         if let acknowledgementsFileName = acknowledgementsFileName {
             viewController = AcknowListViewController(fileNamed: acknowledgementsFileName)
@@ -206,11 +205,11 @@ class AMGAboutViewController: UITableViewController {
     
     // MARK: - Table view data source
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return rows?.count ?? 0
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath)
         if let row = row(at: indexPath) {
             cell.textLabel?.text = row.title
@@ -226,7 +225,7 @@ class AMGAboutViewController: UITableViewController {
         return rows?[indexPath.row]
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let row = row(at: indexPath) {
             row.action(indexPath)
         }
@@ -236,13 +235,13 @@ class AMGAboutViewController: UITableViewController {
 }
 
 extension AMGAboutViewController: MFMailComposeViewControllerDelegate {
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+    public func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         controller.dismiss(animated: true, completion: nil)
     }
 }
 
 extension AMGAboutViewController: SKStoreProductViewControllerDelegate {
-    func productViewControllerDidFinish(_ viewController: SKStoreProductViewController) {
+    public func productViewControllerDidFinish(_ viewController: SKStoreProductViewController) {
         viewController.dismiss(animated: true, completion: nil)
     }
 }
