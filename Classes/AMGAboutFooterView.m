@@ -14,67 +14,8 @@
 #import <VTAppButton.h>
 #import <VTAcknowledgementsViewController.h>
 
-const CGFloat AppsHeaderHeight = 170;
-const CGFloat IconWidth = 70;
-const CGFloat ActionHeight = 20;
-const CGFloat ActionMargin = 10;
-
-@interface AMGAboutFooterView ()
-
-@property (nonatomic, strong, nullable) UIScrollView *appsScrollView;
-@property (nonatomic, strong, nullable) UIView *appsView;
-
-@end
-
 
 @implementation AMGAboutFooterView
-
-- (instancetype)initForViewController:(AMGAboutViewController *)viewController withApps:(NSArray <AMGApp *> *)apps actions:(NSArray <AMGSettingsAction *> *)actions {
-    self = [super initWithFrame:CGRectMake(0, 0, 320, AppsHeaderHeight + 120 + (ActionHeight + ActionMargin) * actions.count)];
-    if (self) {
-        self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-
-        UILabel *footerLabel = [self discoverAllMyAppsLabel];
-        [self addSubview:footerLabel];
-
-        const CGFloat AppsSideMargin = 12;
-        const CGFloat AppsMargin = 8;
-        UIScrollView *appsScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 70, CGRectGetWidth(self.frame), IconWidth)];
-        appsScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        appsScrollView.clipsToBounds = NO;
-        appsScrollView.showsHorizontalScrollIndicator = NO;
-        appsScrollView.alwaysBounceHorizontal = NO;
-
-        UIView *appsView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, (apps.count * (IconWidth + AppsMargin)) - AppsMargin + (AppsSideMargin * 2), IconWidth)];
-        appsView.backgroundColor = [UIColor clearColor];
-        appsView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-
-        [apps enumerateObjectsUsingBlock:^(AMGApp * _Nonnull app, NSUInteger index, BOOL * _Nonnull stop) {
-            AMGAppButton *button = [AMGAppButton buttonWithApp:app];
-            [button addTarget:viewController action:@selector(showApplication:) forControlEvents:UIControlEventTouchUpInside];
-            button.frame = CGRectMake(AppsSideMargin + index * (IconWidth + AppsMargin), 0, IconWidth, IconWidth);
-            [appsView addSubview:button];
-        }];
-
-        appsView.center = CGPointMake(CGRectGetWidth(self.frame) / 2, IconWidth / 2);
-        [appsScrollView addSubview:appsView];
-        appsScrollView.contentSize = appsView.frame.size;
-
-        [self addSubview:appsScrollView];
-        self.appsScrollView = appsScrollView;
-        self.appsView = appsView;
-
-        UILabel *creditsLabel = [AMGAboutFooterView creditsLabelForViewController:viewController];
-        [self addSubview:creditsLabel];
-
-        [actions enumerateObjectsUsingBlock:^(AMGSettingsAction * _Nonnull action, NSUInteger index, BOOL * _Nonnull stop) {
-            UIButton *button = [self buttonForAction:action index:index target:viewController];
-            [self addSubview:button];
-        }];
-    }
-
-    return self;
-}
 
 - (void)layoutSubviews {
     [super layoutSubviews];
