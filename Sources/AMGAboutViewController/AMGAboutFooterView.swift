@@ -1,8 +1,8 @@
 //
-//  AMGAboutFooterView.h
+//  AMGAboutFooterView.swift
 //
 //  Created by Vincent Tourraine on 11/03/2019.
-//  Copyright © 2019-2020 Studio AMANgA. All rights reserved.
+//  Copyright © 2019-2022 Studio AMANgA. All rights reserved.
 //
 
 import UIKit
@@ -22,6 +22,8 @@ class AMGAboutFooterView: UIView {
         static let IconWidth: CGFloat = 70
         static let ActionHeight: CGFloat = 20
         static let ActionMargin: CGFloat = 10
+        static let PrimaryTextColor: UIColor = .secondaryLabel
+        static let SecondaryTextColor: UIColor = .tertiaryLabel
     }
     
     init(for viewController: AMGAboutViewController, with apps: [AMGApp], actions: [AMGSettingsAction]) {
@@ -73,16 +75,75 @@ class AMGAboutFooterView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-// - (instancetype)initForViewController:(AMGAboutViewController *)viewController withApps:(NSArray <AMGApp *> *)apps actions:(NSArray <AMGSettingsAction *> *)actions;
-
-//+ (UILabel *)creditsLabelForViewController:(AMGAboutViewController *)viewController;
+    // MARK: - View life cycle
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        guard let appsScrollView = appsScrollView,
+            let appsView = appsView else {
+            return
+        }
+        
+        if (appsScrollView.frame.width > appsView.frame.width) {
+            appsView.center = CGPoint(x: appsScrollView.frame.width / 2, y: appsScrollView.frame.height / 2)
+        }
+        else {
+            appsView.frame = CGRect(x: 0, y: 0, width: appsView.frame.width, height: appsView.frame.height)
+        }
+    }
+    
+    func discoverAllMyAppsLabel() -> UILabel {
+        let label = UILabel(frame: CGRect(x: 0, y: 40, width: frame.width, height: 20))
+        label.text = NSLocalizedString("Discover All My Apps", comment: "").localizedUppercase
+        label.textAlignment = .center
+        label.textColor = K.PrimaryTextColor
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        // Need Auto Layout
+        // label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+        label.autoresizingMask = .flexibleWidth
+        return label
+    }
     
     static func creditsLabel(for viewController: AMGAboutViewController) -> UILabel {
-        return UILabel()
+        guard let bundleInfo = Bundle.main.infoDictionary,
+              let bundleDisplayName = bundleInfo["CFBundleDisplayName"] as? String,
+              let bundleShortVersion = bundleInfo["CFBundleShortVersionString"] as? String else {
+            return UILabel()
+        }
+
+        let creditsLabel = UILabel(frame: CGRect(x: 0, y: K.AppsHeaderHeight + 20, width: 320, height: 40))
+        creditsLabel.autoresizingMask = .flexibleWidth
+        creditsLabel.textAlignment = .center
+        creditsLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        // Need Auto Layout
+        // creditsLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+        creditsLabel.textColor = K.PrimaryTextColor
+        creditsLabel.numberOfLines = 2
+        creditsLabel.text = String.localizedStringWithFormat(NSLocalizedString("%@ v%@\n%@", comment: ""), viewController.localizedAppName ?? bundleDisplayName, bundleShortVersion, NSLocalizedString("Made by Studio AMANgA", comment: ""))
+        return creditsLabel
     }
     
     func button(for action: AMGSettingsAction, index: Int, target: Any) -> UIButton {
-        return UIButton()
-    }
+        let normalAttributes: [NSAttributedString.Key : Any] = [
+            .underlineStyle: 1,
+            .foregroundColor: K.PrimaryTextColor]
+        let highlightedAttributes: [NSAttributedString.Key : Any] = [
+            .underlineStyle: 1,
+            .foregroundColor: K.SecondaryTextColor]
 
+        let button = UIButton(type: .custom)
+        button.autoresizingMask = .flexibleWidth
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        // Need Auto Layout
+        // button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+
+        button.setAttributedTitle(NSAttributedString(string: action.title, attributes: normalAttributes), for: .normal)
+        button.setAttributedTitle(NSAttributedString(string: action.title, attributes: highlightedAttributes), for: .highlighted)
+        button.tag = index
+        button.addTarget(target, action: #selector(AMGAboutViewController.performFooterAction(_:)), for: .touchUpInside)
+        button.frame = CGRect(x: 0, y: K.AppsHeaderHeight + 70 + CGFloat(index) * (K.ActionHeight + K.ActionMargin), width: 320, height: K.ActionHeight)
+
+        return button
+    }
 }

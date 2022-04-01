@@ -194,7 +194,7 @@ class AMGAboutViewController: UITableViewController {
         navigationController?.present(viewController, animated: true)
     }
     
-    func performFooterAction(_ sender: UIButton) {
+    @objc func performFooterAction(_ sender: UIButton) {
         if let action = footerActions?[sender.tag] {
             action.action(self)
         }
