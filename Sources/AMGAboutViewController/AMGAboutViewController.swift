@@ -21,7 +21,7 @@ public class AMGAboutViewController: UITableViewController {
     @objc public var shareAppURL: URL?
 
     public var appIdentifier: Int?
-    @objc func setAppIdentifier(_ appIdentifier: NSNumber?) {
+    @objc public func setAppIdentifier(_ appIdentifier: NSNumber?) {
         self.appIdentifier = appIdentifier?.intValue
     }
 
