@@ -15,12 +15,16 @@ import AMGAppButton
 
 public class AMGAboutViewController: UITableViewController {
     
+    @objc public var localizedAppName: String?
+    @objc public var largeIconName: String?
+    @objc public var acknowledgementsFileName: String?
+    @objc public var shareAppURL: URL?
+
     public var appIdentifier: Int?
-    public var localizedAppName: String?
-    public var largeIconName: String?
-    public var acknowledgementsFileName: String?
-    public var shareAppURL: URL?
-    
+    @objc func setAppIdentifier(_ appIdentifier: NSNumber?) {
+        self.appIdentifier = appIdentifier?.intValue
+    }
+
     var rows: [AMGSettingsDataRow]?
     var footerActions: [AMGSettingsAction]?
     
@@ -132,11 +136,11 @@ public class AMGAboutViewController: UITableViewController {
     
     // MARK: -
     
-    static func presentContactSupportViewController(from presentingViewController: UIViewController & MFMailComposeViewControllerDelegate) {
+    @objc public static func presentContactSupportViewController(from presentingViewController: UIViewController & MFMailComposeViewControllerDelegate) {
         presentContactSupportViewController(from: presentingViewController, delegate: presentingViewController)
     }
     
-    static func presentContactSupportViewController(from presentingViewController: UIViewController, delegate: MFMailComposeViewControllerDelegate) {
+    @objc public static func presentContactSupportViewController(from presentingViewController: UIViewController, delegate: MFMailComposeViewControllerDelegate) {
         guard MFMailComposeViewController.canSendMail() else {
             let alertController = UIAlertController(title: NSLocalizedString("Cannot Send Email", comment: ""), message: NSLocalizedString("Please configure an email account first, or contact me directly at studioamanga@gmail.com", comment: ""), preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .cancel))
