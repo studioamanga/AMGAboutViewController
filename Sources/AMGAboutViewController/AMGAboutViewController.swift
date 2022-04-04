@@ -186,15 +186,15 @@ public class AMGAboutViewController: UITableViewController {
     }
     
     func presentLicensesViewController(_ sender: Any?) {
-        let viewController: UIViewController
+        let viewController: AcknowListViewController
         if let acknowledgementsFileName = acknowledgementsFileName {
             viewController = AcknowListViewController(fileNamed: acknowledgementsFileName)
         }
         else {
             viewController = AcknowListViewController()
         }
-        
-        navigationController?.present(viewController, animated: true)
+
+        navigationController?.pushViewController(viewController, animated: true)
     }
     
     @objc func performFooterAction(_ sender: UIButton) {
