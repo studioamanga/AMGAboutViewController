@@ -32,8 +32,8 @@ class AMGAboutFooterView: UIView {
         
         autoresizingMask = [.flexibleWidth]
 
-        // let footerLabel = [self discoverAllMyAppsLabel];
-        // [self addSubview:footerLabel];
+        let footerLabel = discoverAllMyAppsLabel()
+        addSubview(footerLabel)
 
         let AppsSideMargin: CGFloat = 12
         let AppsMargin: CGFloat = 8
