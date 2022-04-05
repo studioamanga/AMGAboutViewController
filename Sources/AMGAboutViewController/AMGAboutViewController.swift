@@ -10,7 +10,6 @@ import MessageUI
 import StoreKit
 import AcknowList
 import VTAppButton
-import SVProgressHUD
 import AMGAppButton
 
 public class AMGAboutViewController: UITableViewController {
@@ -163,19 +162,19 @@ public class AMGAboutViewController: UITableViewController {
     }
     
     @objc func showApplication(_ sender: Any) {
-        guard let sender = sender as? VTAppButton,
+        guard let sender = sender as? AMGAppButton,
               let senderAppIdentifier = sender.appIdentifier else {
             return
         }
         
-        SVProgressHUD.show()
+        sender.isLoading = true
         
         let appIdentifier = NSNumber(integerLiteral: senderAppIdentifier)
         let storeProductViewController = SKStoreProductViewController()
         storeProductViewController.delegate = self
         storeProductViewController.loadProduct(withParameters: [SKStoreProductParameterITunesItemIdentifier: appIdentifier]) { result, error in
-            SVProgressHUD.dismiss()
-            
+            sender.isLoading = false
+
             if let error = error {
                 print("\(error.localizedDescription)")
             }
