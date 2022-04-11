@@ -2,12 +2,12 @@
 
 ## Requirements
 
-AMGAboutViewController requires iOS 9.0 and above.
+AMGAboutViewController requires iOS 13.0 and above.
 
 
 ## Credits
 
-AMGAboutViewController was created by [Vincent Tourraine](http://www.vtourraine.net).
+AMGAboutViewController was created by [Vincent Tourraine](https://www.vtourraine.net).
 
 
 ## License
