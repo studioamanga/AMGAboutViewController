@@ -12,7 +12,10 @@ let package = Package(
         .library(name: "AMGAboutViewController", targets: ["AMGAboutViewController"])
     ],
     dependencies: [
-        .package(path: "../AMGAppButton"),
+        .package(
+            url: "https://github.com/studioamanga/AMGAppButton.git",
+            from: "1.0.0"
+        )
         .package(
             url: "https://github.com/vtourraine/AcknowList.git",
             from: "2.0.0"
