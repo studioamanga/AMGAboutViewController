@@ -12,4 +12,4 @@ AMGAboutViewController was created by [Vincent Tourraine](https://www.vtourraine
 
 ## License
 
-AMGAboutViewController is available under the MIT license. See the LICENSE file for more info.
+AMGAboutViewController is available under the MIT license. See the LICENSE.txt file for more info.
