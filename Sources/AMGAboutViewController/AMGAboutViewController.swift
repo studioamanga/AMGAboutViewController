@@ -58,11 +58,16 @@ public class AMGAboutViewController: UITableViewController {
         
         rows = [reviewRow, shareRow, twitterRow]
         
-        let ackRow = AMGSettingsAction(title: AcknowLocalization.localizedTitle()) { viewController in
-            viewController.presentLicensesViewController(nil)
-        }
+        if acknowledgementsFileName != nil {
+            let ackRow = AMGSettingsAction(title: AcknowLocalization.localizedTitle()) { viewController in
+                viewController.presentLicensesViewController(nil)
+            }
         
-        footerActions = [ackRow]
+            footerActions = [ackRow]
+        }
+        else {
+            footerActions = []
+        }
     }
     
     // MARK: - View life cycle
