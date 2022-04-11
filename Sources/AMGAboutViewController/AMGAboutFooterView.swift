@@ -5,12 +5,10 @@
 //  Copyright © 2019-2022 Studio AMANgA. All rights reserved.
 //
 
+#if !os(macOS)
+
 import UIKit
 import AMGAppButton
-
-//@class AMGAboutViewController;
-//@class AMGApp;
-//@class AMGSettingsAction;
 
 class AMGAboutFooterView: UIView {
 
@@ -147,3 +145,5 @@ class AMGAboutFooterView: UIView {
         return button
     }
 }
+
+#endif

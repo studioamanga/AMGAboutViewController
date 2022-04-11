@@ -5,6 +5,8 @@
 //  Copyright © 2019-2022 Studio AMANgA. All rights reserved.
 //
 
+#if !os(macOS)
+
 import Foundation
 
 struct AMGSettingsDataRow {
@@ -18,3 +20,5 @@ struct AMGSettingsAction {
     let title: String
     let action: (AMGAboutViewController)->Void
 }
+
+#endif

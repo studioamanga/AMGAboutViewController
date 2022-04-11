@@ -6,7 +6,7 @@ let package = Package(
     name: "AMGAboutViewController",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v13), .macOS(.v10_15)
     ],
     products: [
         .library(name: "AMGAboutViewController", targets: ["AMGAboutViewController"])

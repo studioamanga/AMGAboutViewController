@@ -5,6 +5,8 @@
 //  Copyright © 2019-2022 Studio AMANgA. All rights reserved.
 //
 
+#if !os(macOS)
+
 import UIKit
 import MessageUI
 import StoreKit
@@ -253,3 +255,5 @@ extension AMGAboutViewController: SKStoreProductViewControllerDelegate {
         viewController.dismiss(animated: true, completion: nil)
     }
 }
+
+#endif

@@ -5,6 +5,8 @@
 //  Copyright © 2019-2022 Studio AMANgA. All rights reserved.
 //
 
+#if !os(macOS)
+
 import UIKit
 
 class AMGAboutHeaderView: UIView {
@@ -26,3 +28,5 @@ class AMGAboutHeaderView: UIView {
         addSubview(iconImageView)
     }
 }
+
+#endif
