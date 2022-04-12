@@ -47,19 +47,19 @@ public class AMGAboutViewController: UITableViewController {
     func commonInit() {
         title = NSLocalizedString("About this App", comment: "")
         
-        let reviewRow = AMGSettingsDataRow(title: NSLocalizedString("Review on the App Store", comment: ""), imageName: "IconStar", systemImageName: "star") {
+        let reviewRow = AMGSettingsDataRow(title: NSLocalizedString("Review on the App Store", comment: ""), systemImageName: "star") {
             self.reviewOnAppStore($0)
         }
         
-        let shareRow = AMGSettingsDataRow(title: NSLocalizedString("Share the App", comment: ""), imageName: "IconChat", systemImageName: "square.on.square") {
+        let shareRow = AMGSettingsDataRow(title: NSLocalizedString("Share the App", comment: ""), systemImageName: "square.on.square") {
             self.shareApp($0)
         }
         
-        let twitterRow = AMGSettingsDataRow(title: NSLocalizedString("Follow on Twitter", comment: ""), imageName: "IconTwitter", systemImageName: "text.bubble") {
+        let twitterRow = AMGSettingsDataRow(title: NSLocalizedString("Follow on Twitter", comment: ""), systemImageName: "text.bubble") {
             self.openTwitterAccount($0)
         }
         
-        let versionHistoryRow = AMGSettingsDataRow(title: NSLocalizedString("Version History", comment: ""), imageName: "IconTwitter", systemImageName: "list.bullet.rectangle") {
+        let versionHistoryRow = AMGSettingsDataRow(title: NSLocalizedString("Version History", comment: ""), systemImageName: "list.bullet.rectangle") {
             self.presentVersionHistory($0)
         }
 

@@ -11,7 +11,6 @@ import Foundation
 
 struct AMGSettingsDataRow {
     let title: String
-    let imageName: String
     let systemImageName: String
     let action: (Any)->Void
 }
