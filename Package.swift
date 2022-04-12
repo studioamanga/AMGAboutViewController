@@ -19,12 +19,16 @@ let package = Package(
         .package(
             url: "https://github.com/vtourraine/AcknowList.git",
             from: "2.0.0"
+        ),
+        .package(
+            url: "https://github.com/vtourraine/TrackupVersionHistory.git",
+            from: "0.1.0"
         )
     ],
     targets: [
         .target(
             name: "AMGAboutViewController",
-            dependencies: ["AMGAppButton", "AcknowList"]
+            dependencies: ["AMGAppButton", "AcknowList", "TrackupVersionHistory"]
         )
     ],
     swiftLanguageVersions: [.v5]

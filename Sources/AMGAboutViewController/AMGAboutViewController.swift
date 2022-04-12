@@ -13,6 +13,7 @@ import StoreKit
 import AcknowList
 import VTAppButton
 import AMGAppButton
+import TrackupVersionHistory
 
 public class AMGAboutViewController: UITableViewController {
     
@@ -58,8 +59,12 @@ public class AMGAboutViewController: UITableViewController {
             self.openTwitterAccount($0)
         }
         
-        rows = [reviewRow, shareRow, twitterRow]
-        
+        let versionHistoryRow = AMGSettingsDataRow(title: NSLocalizedString("Version History", comment: ""), imageName: "IconTwitter", systemImageName: "list.bullet.rectangle") {
+            self.presentVersionHistory($0)
+        }
+
+        rows = [reviewRow, shareRow, twitterRow, versionHistoryRow]
+
         if acknowledgementsFileName != nil {
             let ackRow = AMGSettingsAction(title: AcknowLocalization.localizedTitle()) { viewController in
                 viewController.presentLicensesViewController(nil)
@@ -140,6 +145,11 @@ public class AMGAboutViewController: UITableViewController {
         UIApplication.shared.open(twitterURL, options: [:], completionHandler: nil)
     }
     
+    func presentVersionHistory(_ sender: Any) {
+        let viewController = VersionHistoryViewController()
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+
     // MARK: -
     
     @objc public static func presentContactSupportViewController(from presentingViewController: UIViewController & MFMailComposeViewControllerDelegate) {
