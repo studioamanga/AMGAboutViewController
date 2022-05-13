@@ -266,4 +266,12 @@ extension AMGAboutViewController: SKStoreProductViewControllerDelegate {
     }
 }
 
+// Objective-C helpers
+extension AMGAboutViewController {
+    @objc public func addFooterAction(title: String, action: @escaping (AMGAboutViewController)->Void) {
+        let action = AMGSettingsAction(title: title, action: action)
+        footerActions?.append(action)
+    }
+}
+
 #endif
