@@ -64,24 +64,22 @@ public class AMGAboutViewController: UITableViewController {
         }
 
         rows = [reviewRow, shareRow, twitterRow, versionHistoryRow]
-
-        if acknowledgementsFileName != nil {
-            let ackRow = AMGSettingsAction(title: AcknowLocalization.localizedTitle()) { viewController in
-                viewController.presentLicensesViewController(nil)
-            }
-        
-            footerActions = [ackRow]
-        }
-        else {
-            footerActions = []
-        }
+        footerActions = []
     }
     
     // MARK: - View life cycle
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        if acknowledgementsFileName != nil {
+            let ackAction = AMGSettingsAction(title: AcknowLocalization.localizedTitle()) { viewController in
+                viewController.presentLicensesViewController(nil)
+            }
+
+            footerActions?.insert(ackAction, at: 0)
+        }
+
         configureTableHeaderAndFooter()
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: K.cellIdentifier)
