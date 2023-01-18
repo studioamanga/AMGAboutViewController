@@ -2,7 +2,7 @@
 //  AMGAboutHeaderView.swift
 //
 //  Created by Vincent Tourraine on 11/03/2019.
-//  Copyright © 2019-2022 Studio AMANgA. All rights reserved.
+//  Copyright © 2019-2023 Studio AMANgA. All rights reserved.
 //
 
 #if !os(macOS)
