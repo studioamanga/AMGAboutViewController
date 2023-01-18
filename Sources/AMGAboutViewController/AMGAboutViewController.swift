@@ -54,16 +54,12 @@ public class AMGAboutViewController: UITableViewController {
         let shareRow = AMGSettingsDataRow(title: NSLocalizedString("Share the App", comment: ""), systemImageName: "square.on.square") {
             self.shareApp($0)
         }
-        
-        let twitterRow = AMGSettingsDataRow(title: NSLocalizedString("Follow on Twitter", comment: ""), systemImageName: "text.bubble") {
-            self.openTwitterAccount($0)
-        }
-        
+
         let versionHistoryRow = AMGSettingsDataRow(title: NSLocalizedString("Version History", comment: ""), systemImageName: "list.bullet.rectangle") {
             self.presentVersionHistory($0)
         }
 
-        rows = [reviewRow, shareRow, twitterRow, versionHistoryRow]
+        rows = [reviewRow, shareRow, versionHistoryRow]
         footerActions = []
     }
     
@@ -137,12 +133,7 @@ public class AMGAboutViewController: UITableViewController {
         
         present(activityViewController, animated: true)
     }
-    
-    func openTwitterAccount(_ sender: Any) {
-        let twitterURL = URL(string: "https://www.twitter.com/StudioAMANgA")!
-        UIApplication.shared.open(twitterURL, options: [:], completionHandler: nil)
-    }
-    
+
     func presentVersionHistory(_ sender: Any) {
         let viewController = VersionHistoryViewController()
         navigationController?.pushViewController(viewController, animated: true)

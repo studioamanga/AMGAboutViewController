@@ -11,7 +11,6 @@ Pod::Spec.new do |s|
   s.homepage = "https://github.com/studioamanga/AMGAboutViewController"
   s.license = 'MIT'
   s.author = { "Vincent Tourraine" => "me@vtourraine.net" }
-  s.social_media_url = "http://twitter.com/AMGAboutViewController"
 
   s.platform = :ios, '13.0'
   s.source = { :git => "https://github.com/studioamanga/AMGAboutViewController.git", :tag => "1.0.0" }
