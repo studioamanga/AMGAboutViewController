@@ -5,7 +5,7 @@
 //  Copyright © 2019-2023 Studio AMANgA. All rights reserved.
 //
 
-#if !os(macOS)
+#if !os(macOS) && !os(visionOS)
 
 import Foundation
 
